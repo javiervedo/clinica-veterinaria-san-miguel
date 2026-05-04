@@ -49,7 +49,7 @@ La primera versión incluye:
 docs/         -> documentación funcional y técnica
 database/     -> esquema y datos semilla
 src/backend/  -> API backend en Node.js + Express
-src/frontend/ -> frontend (pendiente de generación)
+src/frontend/ -> frontend (React + Vite)
 tests/        -> pruebas globales
 ```text
 
@@ -58,13 +58,16 @@ tests/        -> pruebas globales
 ### Backend
 - Node.js
 - Express
-- PostgreSQL
+- SQLite (por defecto en este repo, para facilidad de ejecución local)
 - Jest
 - Supertest
 
 ### Frontend
 - React
 - Vite
+- React Router
+- MUI (Material UI)
+- Axios
 
 ### Calidad y despliegue
 - Docker
@@ -89,23 +92,55 @@ Copiar `.env.example` a `.env` y ajustar valores.
 Variables relevantes:
 - `JWT_SECRET`: clave para firmar/verificar JWT
 - `JWT_EXPIRES_IN` (opcional): expiración del token (por defecto `8h`)
+- `DB_CLIENT`: `sqlite` (recomendado) o `pg`
+- `SQLITE_FILE`: ruta al fichero SQLite (por defecto `./data/clinica.sqlite`)
 
-### 4. Ejecutar en desarrollo
+### 4. Inicializar base de datos SQLite (una vez)
+```bat
+node scripts\sqlite-init.js
+```
+
+### 5. Ejecutar en desarrollo
 ```bat
 npm run dev
 ```
 
 Alternativa (desde la raíz del repo, en una sola línea):
 ```bat
-cmd /c "cd /d src\backend && npm run dev"
+cmd /c "cd /d src\backend && node scripts\sqlite-init.js && npm run dev"
 ```
+
+## Cómo ejecutar el frontend
+
+### 1. Entrar al frontend (Windows CMD)
+```bat
+cd src\frontend
+```
+
+### 2. Instalar dependencias
+```bat
+npm install
+```
+
+### 3. Ejecutar en desarrollo
+```bat
+npm run dev
+```
+
+Frontend por defecto:
+- URL: `http://127.0.0.1:5173/`
+- Login demo: `admin@sanmiguel.com / admin123`
+
+> Nota CORS: el backend permite `http://localhost:5173` y `http://127.0.0.1:5173`.
 
 ## Base de datos
 
+Por defecto se usa SQLite (fichero: `src/backend/data/clinica.sqlite`).
+
 Los scripts SQL se encuentran en:
 
-- `database/schema.sql`
-- `database/seed.sql`
+- SQLite: `database/schema.sqlite.sql` y `database/seed.sqlite.sql`
+- PostgreSQL (alternativo): `database/schema.sql` y `database/seed.sql`
 
 ## Cómo probar (demo rápida)
 

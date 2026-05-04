@@ -10,3 +10,7 @@ yarn-debug.log*
 yarn-error.log*
 .vscode/
 .idea/
+# SQLite local DB files (no subir datos locales)
+*.sqlite
+*.sqlite3
+src/backend/data/

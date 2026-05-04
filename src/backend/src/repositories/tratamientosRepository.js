@@ -1,12 +1,13 @@
 const db = require('../config/db');
 
 async function obtenerTodos() {
+  // SQLite: tratamientos cuelga directamente de mascota_id
   const result = await db.query(`
     SELECT
       t.*,
-      ec.mascota_id
+      m.nombre AS mascota_nombre
     FROM tratamientos t
-    INNER JOIN episodios_clinicos ec ON ec.id = t.episodio_id
+    INNER JOIN mascotas m ON m.id = t.mascota_id
     ORDER BY t.id DESC
   `);
 
@@ -16,16 +17,17 @@ async function obtenerTodos() {
 async function crear(data) {
   const result = await db.query(
     `INSERT INTO tratamientos
-      (episodio_id, nombre, pauta, fecha_inicio, fecha_fin, estado)
-     VALUES ($1, $2, $3, $4, $5, $6)
+      (mascota_id, fecha_inicio, fecha_fin, medicamento, dosis, frecuencia, observaciones)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
     [
-      data.episodio_id,
-      data.nombre,
-      data.pauta,
+      data.mascota_id,
       data.fecha_inicio,
       data.fecha_fin || null,
-      data.estado || 'activo'
+      data.medicamento || data.nombre,
+      data.dosis || null,
+      data.frecuencia || data.pauta || null,
+      data.observaciones || null
     ]
   );
 
@@ -33,11 +35,11 @@ async function crear(data) {
 }
 
 async function existeEpisodio(id) {
-  const result = await db.query(
-    'SELECT id FROM episodios_clinicos WHERE id = $1',
-    [id]
-  );
-  return result.rowCount > 0;
+  // En SQLite no existe episodios_clinicos ni episodio_id.
+  // Mantenemos la firma para no romper el service y devolvemos true si viene null/undefined.
+  // Si viene un id numérico, lo consideramos inválido en modo SQLite.
+  if (id === null || id === undefined) return true;
+  return false;
 }
 
 module.exports = {

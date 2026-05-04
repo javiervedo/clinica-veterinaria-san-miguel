@@ -13,7 +13,12 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: true, // permite el origin del navegador (dev)
+    credentials: true
+  })
+);
 app.use(express.json());
 
 app.get('/health', (req, res) => {
