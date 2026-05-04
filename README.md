@@ -43,6 +43,61 @@ La primera versión incluye:
 - API REST documentable
 - tests unitarios e integración básicos
 
+## Capturas de la interfaz (UI)
+
+> Las imágenes del README se guardan en `docs/screenshots/`.  
+> Si clonas el repo y no se ven, revisa que esos ficheros existan en tu rama.
+
+### Login
+Pantalla de acceso al panel interno. La autenticación se realiza contra la API y devuelve un **JWT**.
+  
+![Login](docs/screenshots/login.png)
+
+### Dashboard
+Resumen inicial del panel: módulos disponibles y usuario autenticado (según rol).
+  
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Propietarios (listado)
+Gestión de clientes/propietarios: listado, búsqueda y acciones de edición/borrado.
+  
+![Propietarios](docs/screenshots/propietarios-list.png)
+
+### Propietarios (alta / edición)
+Formulario modal para crear o editar un propietario.
+  
+![Crear propietario](docs/screenshots/propietarios-create.png)
+
+### Propietarios (confirmación de borrado)
+Diálogo de confirmación para evitar borrados accidentales.
+  
+![Confirmar borrado](docs/screenshots/propietarios-delete-confirm.png)
+
+### Mascotas
+Gestión de pacientes (mascotas) asociadas a propietarios.
+  
+![Mascotas](docs/screenshots/mascotas.png)
+
+### Citas
+Gestión de agenda: creación, edición y eliminación de citas.
+  
+![Citas](docs/screenshots/citas.png)
+
+### Episodios clínicos
+Registro y consulta de episodios clínicos (historial). Visible para roles clínicos.
+  
+![Episodios](docs/screenshots/episodios.png)
+
+### Tratamientos
+Gestión de tratamientos prolongados asociados a mascotas.
+  
+![Tratamientos](docs/screenshots/tratamientos.png)
+
+### Recordatorios
+Seguimiento de vacunas, revisiones y recordatorios asociados a mascotas.
+  
+![Recordatorios](docs/screenshots/recordatorios.png)
+
 ## Estructura del repositorio
 
 ```text
@@ -194,61 +249,6 @@ Comportamiento esperado:
 - sin `Authorization` -> 401
 - token válido + rol permitido -> 200
 - token válido + rol no permitido -> 403
-
-## Capturas de la interfaz (UI)
-
-> Las imágenes del README se guardan en `docs/screenshots/`.  
-> Si clonas el repo y no se ven, revisa que esos ficheros existan en tu rama.
-
-### Login
-Pantalla de acceso al panel interno. La autenticación se realiza contra la API y devuelve un **JWT**.
-  
-![Login](docs/screenshots/login.png)
-
-### Dashboard
-Resumen inicial del panel: módulos disponibles y usuario autenticado (según rol).
-  
-![Dashboard](docs/screenshots/dashboard.png)
-
-### Propietarios (listado)
-Gestión de clientes/propietarios: listado, búsqueda y acciones de edición/borrado.
-  
-![Propietarios](docs/screenshots/propietarios-list.png)
-
-### Propietarios (alta / edición)
-Formulario modal para crear o editar un propietario.
-  
-![Crear propietario](docs/screenshots/propietarios-create.png)
-
-### Propietarios (confirmación de borrado)
-Diálogo de confirmación para evitar borrados accidentales.
-  
-![Confirmar borrado](docs/screenshots/propietarios-delete-confirm.png)
-
-### Mascotas
-Gestión de pacientes (mascotas) asociadas a propietarios.
-  
-![Mascotas](docs/screenshots/mascotas.png)
-
-### Citas
-Gestión de agenda: creación, edición y eliminación de citas.
-  
-![Citas](docs/screenshots/citas.png)
-
-### Episodios clínicos
-Registro y consulta de episodios clínicos (historial). Visible para roles clínicos.
-  
-![Episodios](docs/screenshots/episodios.png)
-
-### Tratamientos
-Gestión de tratamientos prolongados asociados a mascotas.
-  
-![Tratamientos](docs/screenshots/tratamientos.png)
-
-### Recordatorios
-Seguimiento de vacunas, revisiones y recordatorios asociados a mascotas.
-  
-![Recordatorios](docs/screenshots/recordatorios.png)
 
 ## Documentación
 
