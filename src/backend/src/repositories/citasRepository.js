@@ -1,14 +1,13 @@
 const db = require('../config/db');
 
 async function obtenerTodas() {
+  // SQLite schema no tiene tabla "veterinarios"; guardamos el nombre directamente en c.veterinario
   const result = await db.query(`
     SELECT
       c.*,
-      m.nombre AS mascota_nombre,
-      v.nombre AS veterinario_nombre
+      m.nombre AS mascota_nombre
     FROM citas c
     INNER JOIN mascotas m ON m.id = c.mascota_id
-    INNER JOIN veterinarios v ON v.id = c.veterinario_id
     ORDER BY c.fecha ASC
   `);
 
@@ -16,32 +15,36 @@ async function obtenerTodas() {
 }
 
 async function obtenerPorId(id) {
-  const result = await db.query(`
+  const result = await db.query(
+    `
     SELECT
       c.*,
-      m.nombre AS mascota_nombre,
-      v.nombre AS veterinario_nombre
+      m.nombre AS mascota_nombre
     FROM citas c
     INNER JOIN mascotas m ON m.id = c.mascota_id
-    INNER JOIN veterinarios v ON v.id = c.veterinario_id
     WHERE c.id = $1
-  `, [id]);
+  `,
+    [id]
+  );
 
   return result.rows[0];
 }
 
 async function crear(data) {
+  // Compatibilidad SQLite:
+  // - En SQLite: tabla "citas" tiene columnas (mascota_id, fecha, motivo, veterinario, estado, notas)
+  // - En Postgres (si existiera): podría existir veterinario_id/tipo/observaciones
   const result = await db.query(
-    `INSERT INTO citas (mascota_id, veterinario_id, fecha, tipo, estado, observaciones)
+    `INSERT INTO citas (mascota_id, fecha, motivo, veterinario, estado, notas)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING *`,
     [
       data.mascota_id,
-      data.veterinario_id,
       data.fecha,
-      data.tipo,
+      data.motivo || data.tipo || null,
+      data.veterinario || null,
       data.estado || 'programada',
-      data.observaciones || null
+      data.notas || data.observaciones || null
     ]
   );
 
@@ -52,20 +55,20 @@ async function actualizar(id, data) {
   const result = await db.query(
     `UPDATE citas
      SET mascota_id = $1,
-         veterinario_id = $2,
-         fecha = $3,
-         tipo = $4,
+         fecha = $2,
+         motivo = $3,
+         veterinario = $4,
          estado = $5,
-         observaciones = $6
+         notas = $6
      WHERE id = $7
      RETURNING *`,
     [
       data.mascota_id,
-      data.veterinario_id,
       data.fecha,
-      data.tipo,
+      data.motivo || data.tipo || null,
+      data.veterinario || null,
       data.estado || 'programada',
-      data.observaciones || null,
+      data.notas || data.observaciones || null,
       id
     ]
   );
@@ -90,23 +93,21 @@ async function existeMascota(id) {
   return result.rowCount > 0;
 }
 
-async function existeVeterinario(id) {
-  const result = await db.query(
-    'SELECT id FROM veterinarios WHERE id = $1',
-    [id]
-  );
-  return result.rowCount > 0;
+async function existeVeterinario(nombre) {
+  // En SQLite no hay tabla veterinarios. Validamos "algo" si viene informado.
+  return Boolean(nombre && String(nombre).trim());
 }
 
-async function existeSolape(veterinarioId, fecha, citaId = null) {
+async function existeSolape(veterinario, fecha, citaId = null) {
+  // En SQLite el veterinario se guarda como texto.
   let query = `
     SELECT id
     FROM citas
-    WHERE veterinario_id = $1
+    WHERE veterinario = $1
       AND fecha = $2
       AND estado <> 'cancelada'
   `;
-  const params = [veterinarioId, fecha];
+  const params = [veterinario, fecha];
 
   if (citaId) {
     query += ' AND id <> $3';

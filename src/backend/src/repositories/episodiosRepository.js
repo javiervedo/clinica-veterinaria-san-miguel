@@ -1,15 +1,14 @@
 const db = require('../config/db');
 
 async function obtenerTodos() {
+  // SQLite: la tabla se llama "episodios" y no hay tabla "veterinarios"
   const result = await db.query(`
     SELECT
-      ec.*,
-      m.nombre AS mascota_nombre,
-      v.nombre AS veterinario_nombre
-    FROM episodios_clinicos ec
-    INNER JOIN mascotas m ON m.id = ec.mascota_id
-    INNER JOIN veterinarios v ON v.id = ec.veterinario_id
-    ORDER BY ec.fecha DESC
+      e.*,
+      m.nombre AS mascota_nombre
+    FROM episodios e
+    INNER JOIN mascotas m ON m.id = e.mascota_id
+    ORDER BY e.fecha DESC
   `);
 
   return result.rows;
@@ -17,18 +16,16 @@ async function obtenerTodos() {
 
 async function crear(data) {
   const result = await db.query(
-    `INSERT INTO episodios_clinicos
-      (mascota_id, veterinario_id, cita_id, motivo_consulta, sintomas, diagnostico, observaciones)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO episodios
+      (mascota_id, fecha, descripcion, diagnostico, notas)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
     [
       data.mascota_id,
-      data.veterinario_id,
-      data.cita_id || null,
-      data.motivo_consulta,
-      data.sintomas || null,
+      data.fecha,
+      data.descripcion || data.motivo_consulta || null,
       data.diagnostico || null,
-      data.observaciones || null
+      data.notas || data.observaciones || null
     ]
   );
 
@@ -40,9 +37,9 @@ async function existeMascota(id) {
   return result.rowCount > 0;
 }
 
-async function existeVeterinario(id) {
-  const result = await db.query('SELECT id FROM veterinarios WHERE id = $1', [id]);
-  return result.rowCount > 0;
+async function existeVeterinario(nombre) {
+  // En SQLite no existe tabla veterinarios.
+  return Boolean(nombre && String(nombre).trim());
 }
 
 module.exports = {

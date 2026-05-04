@@ -5,7 +5,9 @@ function validarCita(data) {
     throw new Error('La mascota es obligatoria');
   }
 
-  if (!data.veterinario_id) {
+  // SQLite no maneja veterinario_id (FK); se guarda el nombre directamente.
+  const vet = data.veterinario_id ?? data.veterinario;
+  if (!vet) {
     throw new Error('El veterinario es obligatorio');
   }
 
@@ -13,8 +15,9 @@ function validarCita(data) {
     throw new Error('La fecha es obligatoria');
   }
 
-  if (!data.tipo || data.tipo.trim() === '') {
-    throw new Error('El tipo es obligatorio');
+  const motivo = data.tipo ?? data.motivo;
+  if (!motivo || String(motivo).trim() === '') {
+    throw new Error('El motivo/tipo es obligatorio');
   }
 }
 
@@ -34,12 +37,12 @@ async function crear(data) {
     throw new Error('La mascota indicada no existe');
   }
 
-  const veterinarioExiste = await repository.existeVeterinario(data.veterinario_id);
+  const veterinarioExiste = await repository.existeVeterinario(data.veterinario_id ?? data.veterinario);
   if (!veterinarioExiste) {
     throw new Error('El veterinario indicado no existe');
   }
 
-  const existeSolape = await repository.existeSolape(data.veterinario_id, data.fecha);
+  const existeSolape = await repository.existeSolape(data.veterinario_id ?? data.veterinario, data.fecha);
   if (existeSolape) {
     throw new Error('El veterinario ya tiene una cita asignada en esa franja horaria');
   }
@@ -55,12 +58,12 @@ async function actualizar(id, data) {
     throw new Error('La mascota indicada no existe');
   }
 
-  const veterinarioExiste = await repository.existeVeterinario(data.veterinario_id);
+  const veterinarioExiste = await repository.existeVeterinario(data.veterinario_id ?? data.veterinario);
   if (!veterinarioExiste) {
     throw new Error('El veterinario indicado no existe');
   }
 
-  const existeSolape = await repository.existeSolape(data.veterinario_id, data.fecha, id);
+  const existeSolape = await repository.existeSolape(data.veterinario_id ?? data.veterinario, data.fecha, id);
   if (existeSolape) {
     throw new Error('El veterinario ya tiene una cita asignada en esa franja horaria');
   }
