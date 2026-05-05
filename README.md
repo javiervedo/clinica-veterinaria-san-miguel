@@ -46,7 +46,6 @@ La primera versión incluye:
 ## Capturas de la interfaz (UI)
 
 > Las imágenes del README se guardan en `docs/screenshots/`.  
-> Si clonas el repo y no se ven, revisa que esos ficheros existan en tu rama.
 
 ### Login
 Pantalla de acceso al panel interno. La autenticación se realiza contra la API y devuelve un **JWT**.
